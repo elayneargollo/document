@@ -1,11 +1,13 @@
 package infoo11;
 
 import java.awt.Color;
+import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -13,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
@@ -64,16 +67,16 @@ public class DocumentPDF extends JFrame {
 		this.buttonProximaPagina(file, avancarProximaPagina, textArea);
 		this.paginacao(contentPane, textArea);
 
-		voltarPAginaAnterior.setBounds(31, 675, 117, 41);
+		voltarPAginaAnterior.setBounds(31, 675, 150, 41);
 		contentPane.add(voltarPAginaAnterior);
 
 		/* Salvar PDF */
 		this.buttonSalvarPDF(update, contentPane);
 
-		update.setBounds(270, 675, 117, 41);
+		update.setBounds(270, 675, 150, 41);
 		contentPane.add(update);
 
-		avancarProximaPagina.setBounds(545, 675, 117, 41);
+		avancarProximaPagina.setBounds(515, 675, 150, 41);
 		contentPane.add(avancarProximaPagina);
 
 	}
@@ -84,6 +87,9 @@ public class DocumentPDF extends JFrame {
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 707, 762);
+		
+		contentPane.setBackground(new Color(173, 216, 230));
+		contentPane.setForeground(new Color(0, 153, 255));
 
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -92,6 +98,8 @@ public class DocumentPDF extends JFrame {
 
 	public void buttonPaginaAnterior(final File file, JButton voltarPAginaAnterior, final JTextArea textArea) {
 
+		voltarPAginaAnterior.setIcon(new ImageIcon("/home/elayne/Imagens/icons8-seta-longa-à-esquerda-32.png"));
+		
 		voltarPAginaAnterior.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
@@ -101,7 +109,7 @@ public class DocumentPDF extends JFrame {
 
 					if (pagina - 1 <= maxPagina && pagina - 1 > 0) {
 						pagina = pagina - 1;
-						textField.setText(pagina + " de " + maxPagina);
+						textField.setText(" " +pagina + " de " + maxPagina);
 						OpenDocumentPDF(file);
 					}
 
@@ -111,7 +119,7 @@ public class DocumentPDF extends JFrame {
 					}
 
 				} catch (IOException e) {
-					JOptionPane.showMessageDialog(null, e.getMessage());
+					JOptionPane.showMessageDialog(null, e.getMessage(), "Erro ao retornar para página", JOptionPane.ERROR_MESSAGE);
 				}
 
 				textArea.setText(conteudoDocument);
@@ -121,6 +129,8 @@ public class DocumentPDF extends JFrame {
 	}
 
 	public void buttonProximaPagina(final File file, JButton avancarProximaPagina, final JTextArea textArea) {
+
+		avancarProximaPagina.setIcon(new ImageIcon("/home/elayne/Imagens/icons8-direita-32.png"));
 
 		avancarProximaPagina.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -132,7 +142,7 @@ public class DocumentPDF extends JFrame {
 					if (maxPagina >= pagina + 1) {
 
 						pagina = pagina + 1;
-						textField.setText(pagina + " de " + maxPagina);
+						textField.setText(" " + pagina + " de " + maxPagina);
 
 						OpenDocumentPDF(file);
 
@@ -142,7 +152,7 @@ public class DocumentPDF extends JFrame {
 					}
 
 				} catch (IOException e) {
-					JOptionPane.showMessageDialog(null, e.getMessage());
+					JOptionPane.showMessageDialog(null, e.getMessage(), "Erro ao avançar para próxima página", JOptionPane.ERROR_MESSAGE);
 				}
 
 				textArea.setText(conteudoDocument);
@@ -153,7 +163,7 @@ public class DocumentPDF extends JFrame {
 
 	public void paginacao(JPanel contentPane, final JTextArea textArea) {
 
-		textArea.setBounds(31, 45, 631, 618);
+		textArea.setBounds(31, 45, 631, 620);
 		contentPane.add(textArea);
 		textArea.setToolTipText("");
 		textArea.setText(conteudoDocument);
@@ -161,14 +171,18 @@ public class DocumentPDF extends JFrame {
 		textField = new JTextField();
 		textField.setEnabled(false);
 		textField.setEditable(false);
-		textField.setBounds(25, 10, 60, 18);
+		
+		textField.setBounds(30, 10, 60, 30);
 		contentPane.add(textField);
 		textField.setColumns(10);
-		textField.setBackground(Color.DARK_GRAY);
-		textField.setText(pagina + " de " + maxPagina);
+		textField.setDisabledTextColor(SystemColor.inactiveCaptionText);
+
+		textField.setText(" " + pagina + " de " + maxPagina);
 	}
 
 	public void buttonSalvarPDF(JButton update, final JPanel contentPane) {
+
+		update.setIcon(new ImageIcon("/home/elayne/Imagens/icons8-salvar-como-16.png"));
 
 		update.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {

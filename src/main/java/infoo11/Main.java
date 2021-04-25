@@ -20,12 +20,12 @@ public class Main  {
 
 	public static void main(String[] args) throws IOException{
 		
-		File file = new File("/home/elayne/agosto2018.pdf");
+		/*File file = new File("/home/elayne/agosto2018.pdf");
 		
 		IDocumentTarget document = new DocumentAdapterPDF();
 		
 		document.open(file);
-		document.getEditor(file);
+		document.getEditor(file);*/
 
 	}
 
