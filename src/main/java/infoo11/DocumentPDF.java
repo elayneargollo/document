@@ -6,7 +6,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -15,9 +14,13 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType1Font;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 public class DocumentPDF extends JFrame {
@@ -30,25 +33,55 @@ public class DocumentPDF extends JFrame {
 	private static final long serialVersionUID = 1L;
 
 	/* Método para abrir o documento */
+	@SuppressWarnings("deprecation")
 	public void OpenDocumentPDF(File file) throws IOException {
+		
+		final int NUM_MINIMO_PAG = 1;
+		
+		try(PDDocument doc = PDDocument.load(file))
+		{
+			String pageText = JOptionPane.showInputDialog("Edit Document");
+			
+			if(pageText != null)
+			{
+				String pageNumber = JOptionPane.showInputDialog("Number page document edit");
+				if(pageNumber != null)
+				{
+					int pag = Integer.parseInt(pageNumber) - NUM_MINIMO_PAG;
 
-		try (PDDocument doc = PDDocument.load(file)) {
+					if(pag >= maxPagina || pag < 0)
+					{
+						JOptionPane.showMessageDialog(null, "Escolha uma numeração válida", "Erro ao salvar", JOptionPane.ERROR_MESSAGE);
+						dispose();
+						return;
+					}
 
-			System.out.println(">>>>>>>>> PDF Carregado  >>>>>>>>>>>>>>>>>>");
-
-			PDFTextStripper stripper = new PDFTextStripper();
-
-			stripper.setStartPage(pagina);
-			stripper.setEndPage(pagina);
-
-			conteudoDocument = stripper.getText(doc);
-			maxPagina = doc.getNumberOfPages();
-
-			doc.save(file.getAbsoluteFile());
-			doc.close();
-
-			System.out.println(">>>>>>>>> PDF Fechado  >>>>>>>>>>>>>>>>>>");
+					PDPage page = doc.getPage(pag);
+					PDFont font = PDType1Font.TIMES_ROMAN;
+					PDPageContentStream contentStream = new PDPageContentStream(doc, page, true,true);
+					
+					contentStream.beginText();
+					contentStream.setFont( font, 12 );
+					contentStream.newLineAtOffset(100, 700);
+					contentStream.showText(pageText);
+					contentStream.endText();
+					contentStream.close();
+					
+					doc.save(file);
+					doc.close();
+				}
+			}
+			else
+			{
+				JOptionPane.showMessageDialog(null, "Operação cancelada", "Aviso",JOptionPane.CANCEL_OPTION);
+			}
+			
+			JOptionPane.showMessageDialog(null, "Arquivo editado com Sucesso", null, JOptionPane.INFORMATION_MESSAGE);
 		}
+		catch (IOException e) {
+			JOptionPane.showMessageDialog(null, e.getMessage(), "Erro ao salvar", JOptionPane.ERROR_MESSAGE);
+		}		
+		
 	}
 
 	/* Método para editar o documento */
@@ -56,28 +89,27 @@ public class DocumentPDF extends JFrame {
 
 		/* Criação dos componentes de tela */
 		JPanel contentPane = new JPanel();
-		JTextArea textArea = new JTextArea();
 		JButton voltarPAginaAnterior = new JButton("Anterior");
 		JButton avancarProximaPagina = new JButton("Próxima");
-		JButton update = new JButton("Salvar");
+		JButton update = new JButton("Edit");
 
 		/* Exibição dos componentes de tela */
 		this.initComponent(contentPane);
-		this.buttonPaginaAnterior(file, voltarPAginaAnterior, textArea);
-		this.buttonProximaPagina(file, avancarProximaPagina, textArea);
-		this.paginacao(contentPane, textArea);
+		this.buttonPaginaAnterior(file, voltarPAginaAnterior, contentPane);
+		this.buttonProximaPagina(file, avancarProximaPagina, contentPane);
+		this.paginacao(file,contentPane);
 
 		voltarPAginaAnterior.setBounds(31, 675, 150, 41);
 		contentPane.add(voltarPAginaAnterior);
 
 		/* Salvar PDF */
-		this.buttonSalvarPDF(update, contentPane);
+		this.buttonSalvarPDF(update, contentPane, file);
 
 		update.setBounds(270, 675, 150, 41);
 		contentPane.add(update);
 
 		avancarProximaPagina.setBounds(515, 675, 150, 41);
-		contentPane.add(avancarProximaPagina);
+		contentPane.add(avancarProximaPagina);	
 
 	}
 
@@ -87,7 +119,7 @@ public class DocumentPDF extends JFrame {
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 707, 762);
-		
+
 		contentPane.setBackground(new Color(173, 216, 230));
 		contentPane.setForeground(new Color(0, 153, 255));
 
@@ -96,10 +128,10 @@ public class DocumentPDF extends JFrame {
 		contentPane.setLayout(null);
 	}
 
-	public void buttonPaginaAnterior(final File file, JButton voltarPAginaAnterior, final JTextArea textArea) {
+	public void buttonPaginaAnterior(final File file, JButton voltarPAginaAnterior, final JPanel contentPane) {
 
 		voltarPAginaAnterior.setIcon(new ImageIcon("/home/elayne/Imagens/icons8-seta-longa-à-esquerda-32.png"));
-		
+
 		voltarPAginaAnterior.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
@@ -109,8 +141,8 @@ public class DocumentPDF extends JFrame {
 
 					if (pagina - 1 <= maxPagina && pagina - 1 > 0) {
 						pagina = pagina - 1;
-						textField.setText(" " +pagina + " de " + maxPagina);
-						OpenDocumentPDF(file);
+
+						paginacao(file, contentPane);
 					}
 
 					else {
@@ -119,59 +151,74 @@ public class DocumentPDF extends JFrame {
 					}
 
 				} catch (IOException e) {
-					JOptionPane.showMessageDialog(null, e.getMessage(), "Erro ao retornar para página", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(null, e.getMessage(), "Erro ao retornar para página",
+							JOptionPane.ERROR_MESSAGE);
 				}
 
-				textArea.setText(conteudoDocument);
 			}
 		});
 
 	}
 
-	public void buttonProximaPagina(final File file, JButton avancarProximaPagina, final JTextArea textArea) {
+	public void buttonProximaPagina(final File file, JButton avancarProximaPagina,  final JPanel contentPane) {
 
 		avancarProximaPagina.setIcon(new ImageIcon("/home/elayne/Imagens/icons8-direita-32.png"));
-
+	
 		avancarProximaPagina.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
 				System.out.println(">>>>>>>>> Avançando para próxima pagina  >>>>>>>>>>>>>>>>>>");
 
-				try {
+				if (maxPagina >= pagina + 1) {
 
-					if (maxPagina >= pagina + 1) {
+					pagina = pagina + 1;
 
-						pagina = pagina + 1;
-						textField.setText(" " + pagina + " de " + maxPagina);
-
-						OpenDocumentPDF(file);
-
-					} else {
-						System.out.println(">>>>>>>>> Sem próxima página  >>>>>>>>>>>>>>>>>>\n");
-						JOptionPane.showMessageDialog(null, "Não há próximas páginas");
+					try {
+						paginacao(file, contentPane);
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
 
-				} catch (IOException e) {
-					JOptionPane.showMessageDialog(null, e.getMessage(), "Erro ao avançar para próxima página", JOptionPane.ERROR_MESSAGE);
+				} else {
+					System.out.println(">>>>>>>>> Sem próxima página  >>>>>>>>>>>>>>>>>>\n");
+					JOptionPane.showMessageDialog(null, "Não há próximas páginas\"", "Aviso",JOptionPane.INFORMATION_MESSAGE);
 				}
 
-				textArea.setText(conteudoDocument);
 			}
 		});
 
 	}
 
-	public void paginacao(JPanel contentPane, final JTextArea textArea) {
+	public void paginacao(final File file, JPanel contentPane) throws InvalidPasswordException, IOException {
+	
+		JTextArea textArea = new JTextArea();
+		
+		try (PDDocument doc = PDDocument.load(file)) {
+	
+			PDFTextStripper stripper = new PDFTextStripper();
+	
+			stripper.setStartPage(pagina);
+			stripper.setEndPage(pagina);
+	
+			conteudoDocument = stripper.getText(doc);
+			maxPagina = doc.getNumberOfPages();
+	
+			doc.close();
+
+		}
 
 		textArea.setBounds(31, 45, 631, 620);
 		contentPane.add(textArea);
 		textArea.setToolTipText("");
 		textArea.setText(conteudoDocument);
+		textArea.setEditable(false);
+		textArea.setEnabled(false);
+		textArea.setDisabledTextColor(SystemColor.inactiveCaptionText);
 
 		textField = new JTextField();
 		textField.setEnabled(false);
 		textField.setEditable(false);
-		
+
 		textField.setBounds(30, 10, 60, 30);
 		contentPane.add(textField);
 		textField.setColumns(10);
@@ -180,34 +227,20 @@ public class DocumentPDF extends JFrame {
 		textField.setText(" " + pagina + " de " + maxPagina);
 	}
 
-	public void buttonSalvarPDF(JButton update, final JPanel contentPane) {
+	public void buttonSalvarPDF(JButton update, final JPanel contentPane, final File file) {
 
 		update.setIcon(new ImageIcon("/home/elayne/Imagens/icons8-salvar-como-16.png"));
 
 		update.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				System.out.println(">>>>>>>>> Salvar PDF  >>>>>>>>>>>>>>>>>>");
-
-				Object[] options = { "Yes, please", "No, thanks", "Cancel" };
-
-				int optionStatusFile = JOptionPane.showOptionDialog(contentPane,
-						"Do you really want to change this file?", "Confirmation", JOptionPane.YES_NO_CANCEL_OPTION,
-						JOptionPane.QUESTION_MESSAGE, null, options, options[2]);
-
-				switch (optionStatusFile) {
-
-				case 0:
-					System.out.println(">>>>>>>>> PDF Editado e Salvo >>>>>>>>>>>>>>>>>>");
-					dispose();
-					break;
-				case 1:
-				case 2:
-					System.out.println(">>>>>>>>> PDF Salvo >>>>>>>>>>>>>>>>>>");
-					dispose();
-					break;
+				try {
+					OpenDocumentPDF(file);
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
 
+				dispose();
 			}
 		});
 
