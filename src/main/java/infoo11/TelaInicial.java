@@ -87,7 +87,7 @@ public class TelaInicial extends JFrame {
 			}
 		});
 
-		btnOpen.setIcon(new ImageIcon("/home/elayne/Imagens/icons8-abrir-visualização-em-nova-aba-64.png"));
+		btnOpen.setIcon(new ImageIcon(TelaInicial.class.getResource("/images/icons8-abrir-visualização-em-nova-aba-64.png")));
 		btnOpen.setBounds(283, 41, 179, 105);
 		contentPane.add(btnOpen);
 
@@ -115,7 +115,7 @@ public class TelaInicial extends JFrame {
 			}
 		});
 
-		btnLinkProjectGitHub.setIcon(new ImageIcon("/home/elayne/Imagens/icons8-link-64.png"));
+		btnLinkProjectGitHub.setIcon(new ImageIcon(TelaInicial.class.getResource("/images/icons8-link-64.png")));
 		btnLinkProjectGitHub.setBounds(122, 236, 184, 105);
 		contentPane.add(btnLinkProjectGitHub);
 
@@ -124,7 +124,7 @@ public class TelaInicial extends JFrame {
 		contentPane.add(lblProject);
 
 		btnNewButton_2 = new JButton("");
-		btnNewButton_2.setIcon(new ImageIcon("/home/elayne/Imagens/icons8-casa-64.png"));
+		btnNewButton_2.setIcon(new ImageIcon(TelaInicial.class.getResource("/images/icons8-casa-64.png")));
 		btnNewButton_2.setBounds(39, 41, 179, 105);
 		contentPane.add(btnNewButton_2);
 
@@ -140,7 +140,7 @@ public class TelaInicial extends JFrame {
 			}
 		});
 
-		btnSobre.setIcon(new ImageIcon("/home/elayne/Imagens/icons8-ponto-de-interrogação-64.png"));
+		btnSobre.setIcon(new ImageIcon(TelaInicial.class.getResource("/images/icons8-ponto-de-interrogação-64.png")));
 		btnSobre.setBounds(519, 41, 179, 105);
 		contentPane.add(btnSobre);
 
@@ -159,7 +159,7 @@ public class TelaInicial extends JFrame {
 
 		});
 
-		btnSair.setIcon(new ImageIcon("/home/elayne/Imagens/icons8-cursor-da-mão-64.png"));
+		btnSair.setIcon(new ImageIcon(TelaInicial.class.getResource("/images/icons8-cursor-da-mão-64.png")));
 		btnSair.setBounds(418, 236, 179, 105);
 		contentPane.add(btnSair);
 
