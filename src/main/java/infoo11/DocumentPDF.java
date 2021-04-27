@@ -1,6 +1,7 @@
 package infoo11;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,9 +12,17 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.JViewport;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -86,15 +95,15 @@ public class DocumentPDF extends JFrame {
 		this.buttonProximaPagina(file, avancarProximaPagina, contentPane);
 		this.paginacao(file, contentPane);
 
-		voltarPAginaAnterior.setBounds(31, 675, 150, 41);
+		voltarPAginaAnterior.setBounds(12, 802, 150, 41);
 		contentPane.add(voltarPAginaAnterior);
 
 		this.buttonEditarPDF(update, contentPane, file);
 
-		update.setBounds(270, 675, 150, 41);
+		update.setBounds(257, 802, 150, 41);
 		contentPane.add(update);
 
-		avancarProximaPagina.setBounds(515, 675, 150, 41);
+		avancarProximaPagina.setBounds(489, 802, 150, 41);
 		contentPane.add(avancarProximaPagina);
 
 	}
@@ -104,7 +113,7 @@ public class DocumentPDF extends JFrame {
 		setTitle("Document PDF Editor");
 		setVisible(true);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 707, 762);
+		setBounds(100, 100, 653, 889);
 		setResizable(false);
 
 		contentPane.setBackground(new Color(173, 216, 230));
@@ -112,6 +121,7 @@ public class DocumentPDF extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
+		
 	}
 
 	private void buttonPaginaAnterior(final File file, JButton voltarPAginaAnterior, final JPanel contentPane) {
@@ -163,7 +173,7 @@ public class DocumentPDF extends JFrame {
 
 	private void paginacao(final File file, JPanel contentPane) throws InvalidPasswordException, IOException {
 
-		JTextArea textArea = new JTextArea();
+		JTextPane textArea = new JTextPane();
 		String conteudoDocument;
 
 		try (PDDocument doc = PDDocument.load(file)) {
@@ -175,12 +185,12 @@ public class DocumentPDF extends JFrame {
 
 			conteudoDocument = stripper.getText(doc);
 			maxPagina = doc.getNumberOfPages();
-
+			
 			doc.close();
 
 		}
 
-		textArea.setBounds(31, 45, 631, 620);
+		textArea.setBounds(12, 51, 627, 745);
 		contentPane.add(textArea);
 		textArea.setToolTipText("");
 		textArea.setText(conteudoDocument);
@@ -191,18 +201,30 @@ public class DocumentPDF extends JFrame {
 		textField = new JTextField();
 		textField.setEnabled(false);
 		textField.setEditable(false);
+		
+		 JScrollBar s = new JScrollBar();  
+		 s.setBounds(12, 51, 627, 745);  
+		 contentPane.add(s);  
 
-		textField.setBounds(30, 10, 60, 30);
+		textField.setBounds(12, 9, 60, 30); 
 		contentPane.add(textField);
 		textField.setColumns(10);
 		textField.setDisabledTextColor(SystemColor.inactiveCaptionText);
-
+		
+		StyledDocument doc = textArea.getStyledDocument();
+		SimpleAttributeSet center = new SimpleAttributeSet();
+		StyleConstants.setLineSpacing(center, 0.3F); 
+		StyleConstants.setFontSize(center, 12); 
+		StyleConstants.setAlignment(center, StyleConstants.ALIGN_JUSTIFIED);
+		doc.setParagraphAttributes(1, doc.getLength(), center, false);
+		
 		textField.setText(" " + pagina + " de " + maxPagina);
 	}
 
 	private void buttonEditarPDF(JButton update, final JPanel contentPane, final File file) {
 
 		update.setIcon(new ImageIcon("/home/elayne/Imagens/icons8-salvar-como-16.png"));
+		
 		update.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
