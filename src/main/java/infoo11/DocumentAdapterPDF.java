@@ -2,6 +2,7 @@ package infoo11;
 
 import java.io.File;
 import java.io.IOException;
+import javax.swing.JFrame;
 
 public class DocumentAdapterPDF extends DocumentPDF implements IDocumentTarget {
 
@@ -11,8 +12,8 @@ public class DocumentAdapterPDF extends DocumentPDF implements IDocumentTarget {
 		this.OpenDocumentPDF(file);
 	}
 
-	public void getEditor(File file) throws IOException {
-		this.EditDocumentPDF(file);
+	public JFrame getEditor(File file) throws IOException {
+		return this.EditDocumentPDF(file);
 	}
 
 }

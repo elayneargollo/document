@@ -1,7 +1,6 @@
 package infoo11;
 
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.SystemColor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,11 +12,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.JViewport;
 import javax.swing.border.EmptyBorder;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -83,8 +79,9 @@ public class DocumentPDF extends JFrame {
 
 	}
 
-	public void EditDocumentPDF(final File file) throws IOException {
-
+	public JFrame EditDocumentPDF(final File file) throws IOException {
+	    JFrame frameEditorDocument = new JFrame();   
+		 
 		JPanel contentPane = new JPanel();
 		JButton voltarPAginaAnterior = new JButton("Anterior");
 		JButton avancarProximaPagina = new JButton("Próxima");
@@ -105,6 +102,10 @@ public class DocumentPDF extends JFrame {
 
 		avancarProximaPagina.setBounds(489, 802, 150, 41);
 		contentPane.add(avancarProximaPagina);
+
+		frameEditorDocument.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  
+		
+	    return frameEditorDocument;
 
 	}
 
