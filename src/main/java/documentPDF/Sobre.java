@@ -1,4 +1,4 @@
-package menu;
+package documentPDF;
 
 import java.awt.Color;
 import java.awt.EventQueue;

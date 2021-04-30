@@ -1,8 +1,7 @@
-package infoo11;
+package interfaces;
 
 import java.io.File;
 import java.io.IOException;
-
 import javax.swing.JFrame;
 
 public interface IDocumentTarget {

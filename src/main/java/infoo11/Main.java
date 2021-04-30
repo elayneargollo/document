@@ -2,11 +2,15 @@ package infoo11;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import documentPDF.DocumentAdapterPDF;
+import interfaces.IDocumentTarget;
 
 public class Main {
 
@@ -25,12 +29,15 @@ public class Main {
 			}
 
 			String extensaoDoArquivo = path.substring(path.lastIndexOf(46) + 1);
+
 			ArrayList<String> extensao = new ArrayList<String>();
 			URL[] jars = loadJUrl(extensao);
 
 			if (extensao.contains(extensaoDoArquivo)) {
+				
+				URLClassLoader sysLoader = getSystemClassLoader(jars);
 
-				IDocumentTarget pdf = new DocumentAdapterPDF();
+				IDocumentTarget pdf = new DocumentAdapterPDF(file);
 
 				try {
 					
@@ -70,5 +77,28 @@ public class Main {
 		return jars;
 	}
 
+	private static final Class[] parameters = new Class[] { URL.class };
+
+	public static URLClassLoader getSystemClassLoader(URL[] jars) {
+		URLClassLoader SystemClassLoader = null;
+
+		try {
+
+			SystemClassLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+			Class sysClass = URLClassLoader.class;
+			Method method = sysClass.getDeclaredMethod("addURL", parameters);
+
+			method.setAccessible(true);
+
+			for (URL jar : jars) {
+				method.invoke(SystemClassLoader, new Object[] { jar });
+				String jarString = jar.toString();
+				String jarName = jarString.substring(jarString.lastIndexOf("/") + 1);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return SystemClassLoader;
+	}
 
 }

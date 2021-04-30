@@ -1,4 +1,4 @@
-package infoo11;
+package documentPDF;
 
 import java.awt.Color;
 import java.awt.Desktop;
@@ -16,7 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import menu.Sobre;
+import infoo11.Main;
 
 @SuppressWarnings("serial")
 public class TelaInicial extends JFrame {
