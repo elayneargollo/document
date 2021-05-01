@@ -98,16 +98,22 @@ public class TelaInicial extends JFrame {
 		btnLinkProjectGitHub.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 
-				URI link;
+				URI link = null;
 
-				try {
 
-					link = new URI("https://github.com/elayneargollo/document");
-					Desktop.getDesktop().browse(link);
+					try {
+						link = new URI("https://github.com/elayneargollo/document");
+					} catch (URISyntaxException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					try {
+						Desktop.getDesktop().browse(link);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 					return;
-				} catch (URISyntaxException | IOException e1) {
-					e1.printStackTrace();
-				}
+				
 			}
 		});
 

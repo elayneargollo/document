@@ -14,11 +14,11 @@ import interfaces.IDocumentTarget;
 
 public class Main {
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings({ "unused" })
 	public void init() {
 
 		String path = JOptionPane.showInputDialog("Informe o caminho do arquivo");
-
+		path = "/home/elayne/padrao.pdf";
 		if (path != null) {
 
 			File file = new File(path);
@@ -34,16 +34,13 @@ public class Main {
 			URL[] jars = loadJUrl(extensao);
 
 			if (extensao.contains(extensaoDoArquivo)) {
-				
-				URLClassLoader sysLoader = getSystemClassLoader(jars);
 
 				IDocumentTarget pdf = new DocumentAdapterPDF(file);
 
+				JFrame frame;
 				try {
-					
-					JFrame frame = pdf.getEditor(file);
+					frame = pdf.getEditor(file);
 					frame.setVisible(true);
-					
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -66,8 +63,7 @@ public class Main {
 
 			try {
 				jars[position] = (new File("./plugin/" + plugins[position])).toURL();
-				String nomeDoPlugin = jars[position].toString()
-						.substring(jars[position].toString().lastIndexOf('/') + 1).replace(".jar", "");
+				String nomeDoPlugin = jars[position].toString().substring(jars[position].toString().lastIndexOf('/') + 1).replace(".jar", "");
 				extensao.add(nomeDoPlugin);
 			} catch (MalformedURLException e) {
 				JOptionPane.showMessageDialog(null, "Error");
@@ -77,8 +73,10 @@ public class Main {
 		return jars;
 	}
 
+	@SuppressWarnings("rawtypes")
 	private static final Class[] parameters = new Class[] { URL.class };
 
+	@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
 	public static URLClassLoader getSystemClassLoader(URL[] jars) {
 		URLClassLoader SystemClassLoader = null;
 
